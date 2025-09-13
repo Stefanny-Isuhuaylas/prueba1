@@ -1,17 +1,16 @@
 import streamlit as st
-from sympy import sympify, simplify
 
 st.set_page_config(page_title="Buscador de Ecuaciones Similares", page_icon="🔎")
 
 st.title("🔎 Buscador de Ecuaciones Similares")
-st.write("Ingresa ecuaciones matemáticas y compara si son equivalentes o producen el mismo resultado.")
+st.write("Ingresa ecuaciones matemáticas y compara si producen el mismo resultado numérico.")
 
 # Inicializamos lista de ecuaciones en sesión
 if "ecuaciones" not in st.session_state:
     st.session_state.ecuaciones = []
 
 # Entrada de ecuación
-nueva_ecuacion = st.text_input("Escribe una ecuación:")
+nueva_ecuacion = st.text_input("Escribe una ecuación (usa x como variable):")
 
 # Botón para agregar ecuación
 if st.button("➕ Agregar ecuación"):
@@ -29,24 +28,28 @@ if st.session_state.ecuaciones:
 
 # Botón para comparar ecuaciones
 if st.button("🔍 Comparar ecuaciones"):
-    ecuaciones_simplificadas = []
-    for eq in st.session_state.ecuaciones:
-        try:
-            # Simplificamos la ecuación con sympy
-            expr = simplify(sympify(eq))
-            ecuaciones_simplificadas.append(expr)
-        except Exception:
-            ecuaciones_simplificadas.append(None)
-
-    # Comparamos
     st.subheader("Resultados:")
     encontrado = False
-    for i in range(len(ecuaciones_simplificadas)):
-        for j in range(i+1, len(ecuaciones_simplificadas)):
-            e1 = ecuaciones_simplificadas[i]
-            e2 = ecuaciones_simplificadas[j]
-            if e1 is not None and e2 is not None and simplify(e1 - e2) == 0:
-                st.success(f"✅ Las ecuaciones `{st.session_state.ecuaciones[i]}` y `{st.session_state.ecuaciones[j]}` son equivalentes o tienen el mismo resultado.")
+    # probamos varios valores para x
+    valores_prueba = [0, 1, 2, 3, 5, 10]
+
+    for i in range(len(st.session_state.ecuaciones)):
+        for j in range(i+1, len(st.session_state.ecuaciones)):
+            eq1 = st.session_state.ecuaciones[i]
+            eq2 = st.session_state.ecuaciones[j]
+            iguales = True
+            for x in valores_prueba:
+                try:
+                    res1 = eval(eq1)
+                    res2 = eval(eq2)
+                except Exception:
+                    iguales = False
+                    break
+                if abs(res1 - res2) > 1e-6:
+                    iguales = False
+                    break
+            if iguales:
+                st.success(f"✅ Las ecuaciones `{eq1}` y `{eq2}` parecen dar el mismo resultado numérico para varios valores de x.")
                 encontrado = True
 
     if not encontrado:
