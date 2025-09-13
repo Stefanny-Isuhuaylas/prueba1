@@ -1,38 +1,26 @@
-# 🎨 Proyecto de Gráficos 3D
+# 🔎 Buscador de Ecuaciones Similares  
 
-¡Bienvenido/a a este repositorio! 🚀  
-Este proyecto tiene como objetivo **crear, visualizar y experimentar con gráficos en 3D** utilizando herramientas modernas y fáciles de usar.
+Este proyecto tiene como objetivo **encontrar ecuaciones matemáticas que sean similares entre sí** o que **tengan el mismo resultado**, facilitando la comparación y el análisis de expresiones matemáticas.  
 
----
+## 🚀 Descripción  
+Muchas veces nos encontramos con distintas ecuaciones que, aunque lucen diferentes, **producen el mismo resultado** o son **equivalentes** bajo ciertas condiciones.  
+Este repositorio ofrece herramientas para:  
+- Analizar ecuaciones introducidas por el usuario.  
+- Comparar ecuaciones y verificar su equivalencia.  
+- Sugerir ecuaciones similares en estructura o resultado.  
 
-## 📝 Descripción
-Este repositorio contiene ejemplos, tutoriales y código para generar **modelos y visualizaciones 3D**. La idea es ayudar a quienes quieran aprender desde lo básico hasta técnicas más avanzadas para crear escenas tridimensionales interactivas.
+## 🛠️ Tecnologías  
+- **Lenguaje principal**: (Ej. Python/JavaScript).  
+- **Librerías matemáticas**: (Ej. SymPy, NumPy).  
+- **Frameworks/Entorno**: (Ej. Jupyter Notebook, Streamlit).  
 
----
-
-## ✨ Características
-- Creación de figuras 3D básicas (cubos, esferas, planos).
-- Renderizado interactivo en el navegador.
-- Uso de librerías populares como **Three.js**, **Babylon.js** o **WebGL**.
-- Ejemplos paso a paso para aprender conceptos de gráficos 3D.
-
----
-
-## 🚀 Tecnologías
-- **JavaScript / TypeScript**
-- **Three.js** o **Babylon.js**
-- **HTML / CSS**
-- Opcional: **Python con matplotlib 3D o PyOpenGL** para ejemplos en escritorio.
-
----
-
-## 📂 Estructura del Repositorio
-
----
-
-## 📚 Cómo Empezar
-1. Clona este repositorio:
-   ```bash
-   git clone https://github.com/TU-USUARIO/TU-REPO.git
-npm install
-npm run dev
+## 📦 Instalación  
+Clona este repositorio:  
+```bash
+git clone https://github.com/tu-usuario/tu-repo.git
+cd tu-repo
+pip install -r requirements.txt
+python main.py
+Ecuación 1: 2x + 4
+Ecuación 2: 4(x + 2)/2
+→ Resultado: Ambas son equivalentes
