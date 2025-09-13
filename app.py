@@ -1,42 +1,37 @@
 import streamlit as st
 import numpy as np
-import sympy as sp
 import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="Gráficos 3D de Ecuaciones", layout="wide")
-st.title("🎨 Graficador de Ecuaciones 3D")
+st.title("🎨 Graficador de Funciones 3D (sin Sympy)")
 
-# --- Estado para guardar ecuaciones ---
-if "ecuaciones" not in st.session_state:
-    st.session_state.ecuaciones = []
+if "funciones" not in st.session_state:
+    st.session_state.funciones = []
 
-st.write("Ingresa ecuaciones en términos de **x**, **y** y **z** (ejemplo: `x**2 + y**2 - z`)")
+st.write("Ingresa expresiones para **z** en función de **x** y **y** (por ejemplo: `x**2 + y**2`)")
 
-# Input para nueva ecuación
-nueva_ecuacion = st.text_input("Nueva ecuación:")
+nueva_funcion = st.text_input("Nueva función z(x,y):")
 
 col1, col2 = st.columns(2)
 with col1:
-    if st.button("➕ Agregar ecuación"):
-        if nueva_ecuacion.strip() != "":
-            st.session_state.ecuaciones.append(nueva_ecuacion.strip())
+    if st.button("➕ Agregar función"):
+        if nueva_funcion.strip() != "":
+            st.session_state.funciones.append(nueva_funcion.strip())
 with col2:
     if st.button("🗑️ Limpiar lista"):
-        st.session_state.ecuaciones = []
+        st.session_state.funciones = []
 
-st.subheader("📜 Ecuaciones actuales")
-if st.session_state.ecuaciones:
-    for i, eq in enumerate(st.session_state.ecuaciones, 1):
-        st.write(f"{i}. `{eq}`")
+st.subheader("📜 Funciones actuales")
+if st.session_state.funciones:
+    for i, f in enumerate(st.session_state.funciones, 1):
+        st.write(f"{i}. `z = {f}`")
 else:
-    st.info("No hay ecuaciones agregadas aún.")
+    st.info("No hay funciones agregadas aún.")
 
-# --- Botón para generar gráfico 3D ---
 if st.button("🎨 Generar Gráfico 3D"):
-    if not st.session_state.ecuaciones:
-        st.warning("Agrega al menos una ecuación primero.")
+    if not st.session_state.funciones:
+        st.warning("Agrega al menos una función primero.")
     else:
-        x, y, z = sp.symbols('x y z')
         fig = plt.figure(figsize=(8, 6))
         ax = fig.add_subplot(111, projection='3d')
 
@@ -45,22 +40,15 @@ if st.button("🎨 Generar Gráfico 3D"):
         Y_vals = np.linspace(-5, 5, 50)
         X, Y = np.meshgrid(X_vals, Y_vals)
 
-        for eq_text in st.session_state.ecuaciones:
+        for f_text in st.session_state.funciones:
             try:
-                expr = sp.sympify(eq_text)
-                # Resolver para z
-                sol = sp.solve(sp.Eq(expr, 0), z)
-                if sol:
-                    Z = sp.lambdify((x, y), sol[0], "numpy")(X, Y)
-                    ax.plot_surface(X, Y, Z, alpha=0.5)
-                else:
-                    st.warning(f"No se pudo resolver para z: `{eq_text}`")
+                # Evaluar z con numpy
+                Z = eval(f_text, {"x": X, "y": Y, "np": np})
+                ax.plot_surface(X, Y, Z, alpha=0.5)
             except Exception as e:
-                st.error(f"Error con la ecuación `{eq_text}`: {e}")
+                st.error(f"Error con la función `{f_text}`: {e}")
 
         ax.set_xlabel("X")
         ax.set_ylabel("Y")
         ax.set_zlabel("Z")
         st.pyplot(fig)
-
-
