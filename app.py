@@ -1,54 +1,62 @@
 import streamlit as st
-import numpy as np
-import matplotlib.pyplot as plt
 
-st.set_page_config(page_title="Gráficos 3D de Ecuaciones", layout="wide")
-st.title("🎨 Graficador de Funciones 3D (sin Sympy)")
+st.set_page_config(page_title="Buscador de Ecuaciones Similares", page_icon="🔎")
 
-if "funciones" not in st.session_state:
-    st.session_state.funciones = []
+st.title("🔎 Buscador de Ecuaciones Similares")
+st.write("Ingresa ecuaciones matemáticas y compara si producen el mismo resultado numérico.")
 
-st.write("Ingresa expresiones para **z** en función de **x** y **y** (por ejemplo: `x**2 + y**2`)")
+# Inicializamos lista de ecuaciones en sesión
+if "ecuaciones" not in st.session_state:
+    st.session_state.ecuaciones = []
 
-nueva_funcion = st.text_input("Nueva función z(x,y):")
+# Entrada de ecuación
+nueva_ecuacion = st.text_input("Escribe una ecuación (usa x como variable):")
 
-col1, col2 = st.columns(2)
-with col1:
-    if st.button("➕ Agregar función"):
-        if nueva_funcion.strip() != "":
-            st.session_state.funciones.append(nueva_funcion.strip())
-with col2:
-    if st.button("🗑️ Limpiar lista"):
-        st.session_state.funciones = []
-
-st.subheader("📜 Funciones actuales")
-if st.session_state.funciones:
-    for i, f in enumerate(st.session_state.funciones, 1):
-        st.write(f"{i}. `z = {f}`")
-else:
-    st.info("No hay funciones agregadas aún.")
-
-if st.button("🎨 Generar Gráfico 3D"):
-    if not st.session_state.funciones:
-        st.warning("Agrega al menos una función primero.")
+# Botón para agregar ecuación
+if st.button("➕ Agregar ecuación"):
+    if nueva_ecuacion.strip() != "":
+        st.session_state.ecuaciones.append(nueva_ecuacion)
+        st.success(f"Ecuación agregada: `{nueva_ecuacion}`")
     else:
-        fig = plt.figure(figsize=(8, 6))
-        ax = fig.add_subplot(111, projection='3d')
+        st.warning("Por favor, escribe una ecuación antes de agregarla.")
 
-        # Rango de valores
-        X_vals = np.linspace(-5, 5, 50)
-        Y_vals = np.linspace(-5, 5, 50)
-        X, Y = np.meshgrid(X_vals, Y_vals)
+# Mostramos las ecuaciones ingresadas
+if st.session_state.ecuaciones:
+    st.subheader("Ecuaciones ingresadas:")
+    for i, eq in enumerate(st.session_state.ecuaciones, 1):
+        st.write(f"{i}. `{eq}`")
 
-        for f_text in st.session_state.funciones:
-            try:
-                # Evaluar z con numpy
-                Z = eval(f_text, {"x": X, "y": Y, "np": np})
-                ax.plot_surface(X, Y, Z, alpha=0.5)
-            except Exception as e:
-                st.error(f"Error con la función `{f_text}`: {e}")
+# Botón para comparar ecuaciones
+if st.button("🔍 Comparar ecuaciones"):
+    st.subheader("Resultados:")
+    encontrado = False
+    # probamos varios valores para x
+    valores_prueba = [0, 1, 2, 3, 5, 10]
 
-        ax.set_xlabel("X")
-        ax.set_ylabel("Y")
-        ax.set_zlabel("Z")
-        st.pyplot(fig)
+    for i in range(len(st.session_state.ecuaciones)):
+        for j in range(i+1, len(st.session_state.ecuaciones)):
+            eq1 = st.session_state.ecuaciones[i]
+            eq2 = st.session_state.ecuaciones[j]
+            iguales = True
+            for x in valores_prueba:
+                try:
+                    res1 = eval(eq1)
+                    res2 = eval(eq2)
+                except Exception:
+                    iguales = False
+                    break
+                if abs(res1 - res2) > 1e-6:
+                    iguales = False
+                    break
+            if iguales:
+                st.success(f"✅ Las ecuaciones `{eq1}` y `{eq2}` parecen dar el mismo resultado numérico para varios valores de x.")
+                encontrado = True
+
+    if not encontrado:
+        st.info("No se encontraron ecuaciones equivalentes en la lista.")
+
+# Botón para limpiar
+if st.button("🗑️ Limpiar lista"):
+    st.session_state.ecuaciones = []
+    st.success("Lista de ecuaciones reiniciada.")
+
