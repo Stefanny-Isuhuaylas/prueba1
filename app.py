@@ -2,16 +2,15 @@ import streamlit as st
 import numpy as np
 import sympy as sp
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
-st.set_page_config(page_title="Comparador de Ecuaciones 3D", layout="wide")
-st.title("🔍 Comparador y Gráfico de Ecuaciones en 3D")
+st.set_page_config(page_title="Gráficos 3D de Ecuaciones", layout="wide")
+st.title("🎨 Graficador de Ecuaciones 3D")
 
 # --- Estado para guardar ecuaciones ---
 if "ecuaciones" not in st.session_state:
     st.session_state.ecuaciones = []
 
-st.write("Ingresa ecuaciones en términos de **x**, **y** y **z** (por ejemplo: `x**2 + y**2 - z`)")
+st.write("Ingresa ecuaciones en términos de **x**, **y** y **z** (ejemplo: `x**2 + y**2 - z`)")
 
 # Input para nueva ecuación
 nueva_ecuacion = st.text_input("Nueva ecuación:")
@@ -42,9 +41,9 @@ if st.button("🎨 Generar Gráfico 3D"):
         ax = fig.add_subplot(111, projection='3d')
 
         # Rango de valores
-        X = np.linspace(-5, 5, 50)
-        Y = np.linspace(-5, 5, 50)
-        X, Y = np.meshgrid(X, Y)
+        X_vals = np.linspace(-5, 5, 50)
+        Y_vals = np.linspace(-5, 5, 50)
+        X, Y = np.meshgrid(X_vals, Y_vals)
 
         for eq_text in st.session_state.ecuaciones:
             try:
@@ -52,7 +51,6 @@ if st.button("🎨 Generar Gráfico 3D"):
                 # Resolver para z
                 sol = sp.solve(sp.Eq(expr, 0), z)
                 if sol:
-                    # Tomamos la primera solución
                     Z = sp.lambdify((x, y), sol[0], "numpy")(X, Y)
                     ax.plot_surface(X, Y, Z, alpha=0.5)
                 else:
@@ -64,3 +62,5 @@ if st.button("🎨 Generar Gráfico 3D"):
         ax.set_ylabel("Y")
         ax.set_zlabel("Z")
         st.pyplot(fig)
+
+
